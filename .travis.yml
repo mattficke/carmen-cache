@@ -22,12 +22,14 @@ before_install:
 - node --version
 - npm --version
 - sudo ./test/travis-protobuf.sh
+- sudo apt-get install valgrind
 
 install:
 - npm install --build-from-source
 
 script:
 - npm test
+- valgrind --leak-check=full --log-fd=1 npm test | grep definitely
 
 after_success:
 - ./test/travis-publish.sh
