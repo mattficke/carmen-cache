@@ -23,7 +23,7 @@ install:
 # not needed: coverity runs it
 
 script:
-- npm test
+- if [ ${COVERITY_SCAN_BRANCH} != 1 ]; then npm test; fi;
 
 addons:
   coverity_scan:
