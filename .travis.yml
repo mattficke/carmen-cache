@@ -15,21 +15,28 @@ matrix:
      # Coverage
      - os: osx
        compiler: clang
-       env: NODE_VERSION="0.10.38" COVERAGE=true
+       env: NODE_VERSION="0.10.38" COVERAGE=true FLAGS="--debug"
+     # Debug + Clang sanitizers
+     - os: linux
+       compiler: clang
+       env: NODE_VERSION="0.10.38" SANITIZE=address
+     - os: linux
+       compiler: clang
+       env: NODE_VERSION="0.10.38" SANITIZE=integer
      # Linux
      - os: linux
        compiler: clang
-       env: NODE_VERSION="0.12.2" # node abi 14
+       env: NODE_VERSION="0.12.2" PUBLISH=true # node abi 14
      - os: linux
        compiler: clang
-       env: NODE_VERSION="0.10.38" # node abi 11
+       env: NODE_VERSION="0.10.38" PUBLISH=true # node abi 11
      # OS X
      - os: osx
        compiler: clang
-       env: NODE_VERSION="0.12.2" # node abi 14
+       env: NODE_VERSION="0.12.2" PUBLISH=true # node abi 14
      - os: osx
        compiler: clang
-       env: NODE_VERSION="0.10.38" # node abi 11
+       env: NODE_VERSION="0.10.38" PUBLISH=true # node abi 11
 
 env:
   global:
@@ -39,6 +46,7 @@ env:
 
 before_install:
  - export COVERAGE=${COVERAGE:-false}
+ - export SANITIZE=${SANITIZE:-false}
  - if [[ $(uname -s) == 'Linux' ]]; then
      export CXX="clang++-3.5";
      export CC="clang-3.5";
@@ -63,11 +71,15 @@ install:
      export CXXFLAGS="--coverage ${CXXFLAGS}";
      export LDFLAGS="--coverage ${LDFLAGS}";
    fi
- - npm install --build-from-source --clang=1
+ - if [[ ${SANITIZE} != false ]]; then
+     export CXXFLAGS="-fsanitize=${SANITIZE} ${CXXFLAGS}";
+     export LDFLAGS="-fsanitize=${SANITIZE} ${LDFLAGS}";
+   fi
+ - npm install --build-from-source --clang=1 ${FLAGS}
 
 script:
 - npm test
 
 after_success:
 - if [[ ${COVERAGE} == true ]]; then cpp-coveralls --exclude node_modules --exclude tests --build-root build --gcov-options '\-lp' --exclude ./mason_packages --exclude src/pbf.hpp --exclude ./deps --exclude build/Release/obj/gen --exclude src/binding.hpp > /dev/null; fi;
-- if [[ ${COVERAGE} != true ]]; then ./test/travis-publish.sh; fi;
+- if [[ ${PUBLISH} == true ]]; then ./test/travis-publish.sh; fi;
