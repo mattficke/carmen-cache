@@ -20,6 +20,7 @@ env:
   global:
   - secure: bLTdbWwf3v8X7yJlLLqPc9BRhFquwma4oYL9T2C38FXzSuqhXJZF+kNXjHd85E4lJNnuLXDjrPJLLkigd70J9Tclu2XQvy3cGzXI+EMsO6rDvQN24Eoi6uJ/qHhTrAoud526ouxO8qk9YYLjD6UWX1EOtqcEdwPMose8L1wsMZI=
   - secure: lmfuNtK0/ubV4ZZobgfeKY6DzG41ZciS4a00yCe29jHLxAg+EEmB/qpsW5d1//cC94OKsAySW08xp2uX5wBVvtryaaoiwU7fdKF9DOxHRHieGw/3+m8NNjELkd5hKMKiqDj7l4QPMchzBQR2PQkoG0UMCGUFe+RmzZ2/iCdGHXU=
+  - secure: Tvi/L+RQV8KXprOAHtOOVmeh6BIr4xkLRA7Fus5BJbzXT+LfUhYU2cbCaFSzc5i9Svz5OpYe4VtlgrAn1dG/Sj3SOQL/DzfZJjoYpU+DRdO3v54naT97JUYCmKSB+8ZR4XxEP7MTRShDAh/rmq1+W9rBaMuYCcippMkAXbk1UFg=
 
 before_install:
 - export platform=$(uname -s | sed "y/ABCDEFGHIJKLMNOPQRSTUVWXYZ/abcdefghijklmnopqrstuvwxyz/")
@@ -40,3 +41,12 @@ script:
 
 after_success:
 - ./test/travis-publish.sh
+
+addons:
+  coverity_scan:
+    project:
+      name: "mapbox/carmen-cache"
+      description: "Protobuf-based cache"
+    notification_email: dane@mapbox.com
+    build_command:   "npm install --build-from-source"
+    branch_pattern: coverity_scan
