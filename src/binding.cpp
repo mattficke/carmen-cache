@@ -10,7 +10,7 @@
 namespace carmen {
 
 /* use only the 32 least significant bits (should it be most significant? does it matter?) */
-#define trunc_hash(id) static_cast<uint32_t>(id & 0xffffffff)
+#define trunc_hash(id) static_cast<uint32_t>(id & 0xfffffff)
 
 using namespace v8;
 
