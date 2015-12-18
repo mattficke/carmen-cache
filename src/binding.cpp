@@ -120,7 +120,7 @@ Cache::intarray __get(Cache const* c, std::string const& type, std::string const
 
                         // delta decode values.
                         uint64_t lastval = 0;
-                        while (pbfarray.next()) {
+                        while (pbfarray.next() && array.size() < 100000) {
                             if (lastval == 0) {
                                 lastval = pbfarray.value;
                                 array.emplace_back(lastval);
